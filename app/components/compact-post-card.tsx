@@ -15,12 +15,15 @@ export function CompactPostCard({ post }: { post: Post }) {
 
 export function CompactPostCardSkeleton() {
   return (
-    <Card className="text-transparent">
-      <Skeleton>
-        <CardTitle>loading...</CardTitle>
+    <Card className="text-transparent p-4 flex flex-col gap-1">
+      <Skeleton className="w-2/3">
+        <CardTitle className="text-lg">loading...</CardTitle>
       </Skeleton>
       <Skeleton>
-        <p>loading...</p>
+        <p className="text-sm">loading...</p>
+      </Skeleton>
+      <Skeleton className="w-1/2">
+        <p className="text-sm">more loading...</p>
       </Skeleton>
     </Card>
   );

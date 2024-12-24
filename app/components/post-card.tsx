@@ -16,7 +16,7 @@ export function PostCard({ post }: { post: Post }) {
 
 export function PostCardSkeleton() {
   return (
-    <div className="flex flex-col gap-4 text-transparent">
+    <div className="flex flex-col gap-4 py-6 text-transparent">
       <Skeleton>
         <PostCardTitle>loading...</PostCardTitle>
       </Skeleton>
