@@ -1,4 +1,5 @@
-import type { ApiResponse, Post, Sig } from "./types";
+import type { ApiPost, ApiResponse, Post, Sig } from "./types";
+import removeMarkdown from "remove-markdown";
 
 const postCache = new Map<string, Post>();
 
@@ -13,25 +14,35 @@ export async function fetchApi<T>(path: string) {
 }
 
 export async function fetchPosts(skip: number, limit: number) {
-  const posts = await fetchApi<Post[]>(
+  const posts = await fetchApi<ApiPost[]>(
     `/post/list?skip=${skip}&limit=${limit}&sort=latest`
   );
 
-  for (const post of posts) {
+  const cleanedPosts = posts.map((post) => ({
+    ...post,
+    cleanContent: removeMarkdown(post.content),
+  }));
+
+  for (const post of cleanedPosts) {
     postCache.set(post._id, post);
   }
 
-  return posts;
+  return cleanedPosts;
 }
 
 export async function fetchTopPosts(limit = 3) {
-  const posts = await fetchApi<Post[]>(`/post/list?limit=${limit}&skip=0`);
+  const posts = await fetchApi<ApiPost[]>(`/post/list?limit=${limit}&skip=0`);
 
-  for (const post of posts) {
+  const cleanedPosts = posts.map((post) => ({
+    ...post,
+    cleanContent: removeMarkdown(post.content),
+  }));
+  
+  for (const post of cleanedPosts) {
     postCache.set(post._id, post);
   }
 
-  return posts;
+  return cleanedPosts;
 }
 
 export async function fetchPost(id: string) {
@@ -39,11 +50,16 @@ export async function fetchPost(id: string) {
     return postCache.get(id);
   }
 
-  const post = await fetchApi<Post>(`/post/${id}`);
+  const post = await fetchApi<ApiPost>(`/post/${id}`);
+  
+  const cleanedPost = {
+    ...post,
+    cleanContent: removeMarkdown(post.content),
+  };
 
-  postCache.set(post._id, post);
+  postCache.set(post._id, cleanedPost);
 
-  return post;
+  return cleanedPost;
 }
 
 export function fetchSigs() {

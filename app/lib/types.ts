@@ -8,7 +8,7 @@ type User = {
   name: string;
 };
 
-export type Post = {
+export type ApiPost = {
   _id: string;
   sig: Pick<Sig, "_id" | "name">;
   title: string;
@@ -25,6 +25,10 @@ export type Post = {
   updatedAt: string;
   comments: number;
 };
+
+export type Post = ApiPost & {
+  cleanContent: string;
+}
 
 export type Sig = {
   _id: string;

@@ -1,13 +1,15 @@
 import type { Post } from "~/lib/types";
 import { Card, CardTitle } from "./ui/card";
 import { Skeleton } from "./ui/skeleton";
+import { PostHeader } from "./post-card";
 
 export function CompactPostCard({ post }: { post: Post }) {
   return (
-    <Card className="p-4 flex flex-col gap-1">
-      <CardTitle className="text-lg">{post.title}</CardTitle>
+    <Card className="p-4 flex flex-col min-w-72 w-full">
+      <PostHeader post={post} className="text-sm" />
+      <CardTitle className="text-lg mb-2">{post.title}</CardTitle>
       <p className="line-clamp-2 text-muted-foreground text-sm break-all">
-        {post.content}
+        {post.cleanContent}
       </p>
     </Card>
   );
@@ -15,7 +17,7 @@ export function CompactPostCard({ post }: { post: Post }) {
 
 export function CompactPostCardSkeleton() {
   return (
-    <Card className="text-transparent p-4 flex flex-col gap-1">
+    <Card className="text-transparent p-4 flex flex-col gap-1 w-full min-w-72">
       <Skeleton className="w-2/3">
         <CardTitle className="text-lg">loading...</CardTitle>
       </Skeleton>
@@ -35,6 +37,8 @@ export function CompactPostCardsContainer({
   children: React.ReactNode;
 }) {
   return (
-    <div className="grid md:grid-cols-3 container gap-3 py-4">{children}</div>
+    <div className="flex w-full overflow-scroll no-scrollbar container gap-3 py-4">
+      {children}
+    </div>
   );
 }
