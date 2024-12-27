@@ -1,12 +1,13 @@
 import type { Post } from "~/lib/types";
 import { Card, CardTitle } from "./ui/card";
 import { Skeleton } from "./ui/skeleton";
-import { PostHeader } from "./post-card";
+import { PostHeader, PostHeaderSkeleton } from "./post-card";
 import { Link } from "react-router";
+import type { ReactNode } from "react";
 
 export function CompactPostCard({ post }: { post: Post }) {
   return (
-    <Link to={`/post/${post._id}`}>
+    <Link to={`/posts/${post._id}`}>
       <Card className="flex w-full min-w-72 flex-col p-4">
         <PostHeader post={post} className="text-sm" />
         <CardTitle className="mb-2 text-lg">{post.title}</CardTitle>
@@ -21,6 +22,7 @@ export function CompactPostCard({ post }: { post: Post }) {
 export function CompactPostCardSkeleton() {
   return (
     <Card className="flex w-full min-w-72 flex-col gap-1 p-4 text-transparent">
+      <PostHeaderSkeleton className="text-sm" />
       <Skeleton className="w-2/3">
         <CardTitle className="text-lg">loading...</CardTitle>
       </Skeleton>
@@ -37,7 +39,7 @@ export function CompactPostCardSkeleton() {
 export function CompactPostCardsContainer({
   children,
 }: {
-  children: React.ReactNode;
+  children: ReactNode;
 }) {
   return (
     <div className="no-scrollbar container flex w-full gap-3 overflow-scroll py-4">

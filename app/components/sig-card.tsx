@@ -1,24 +1,20 @@
 import type { Sig } from "~/lib/types";
 import { Button, type ButtonProps } from "./ui/button";
-import { Link } from "react-router";
-import { useLocation } from "react-router";
+import { Await, Link } from "react-router";
 import { Skeleton } from "./ui/skeleton";
+import { Suspense } from "react";
 
 function SigButton(props: ButtonProps) {
   return (
     <Button
-      className="px-3 py-1.5 h-auto text-sm"
+      className="h-auto px-3 py-1.5 text-sm"
       variant="secondary"
       {...props}
     />
   );
 }
 
-export function SigCard({ sig }: { sig: Sig }) {
-  const { pathname } = useLocation();
-
-  const isActive = pathname.startsWith(`/sig/@${sig.customId}`);
-
+export function SigCard({ sig, isActive }: { sig: Sig; isActive?: boolean }) {
   return (
     <SigButton variant={isActive ? "default" : "secondary"} asChild>
       <Link
@@ -35,7 +31,7 @@ export function SigCardSkeleton() {
   return (
     <Skeleton>
       <Button
-        className="px-2 py-1 h-auto text-sm text-transparent"
+        className="h-auto px-2 py-1 text-sm text-transparent"
         variant="secondary"
         disabled
       >
@@ -46,16 +42,46 @@ export function SigCardSkeleton() {
 }
 
 export function SigCardsContainer({ children }: { children: React.ReactNode }) {
-  const { pathname } = useLocation();
-
-  const isHome = pathname === "/";
-
   return (
-    <div className="flex items-center text-xs gap-3 py-2 overflow-x-auto container no-scrollbar">
-      <SigButton variant={isHome ? "default" : "secondary"} asChild>
-        <Link to="/">首頁</Link>
-      </SigButton>
+    <div className="no-scrollbar container flex items-center gap-3 overflow-x-auto py-2 text-xs">
       {children}
     </div>
+  );
+}
+
+export function SigCardsAsyncList({
+  promise,
+  activeId,
+}: {
+  promise: Promise<Sig[]>;
+  activeId?: string;
+}) {
+  return (
+    <Suspense
+      fallback={
+        <SigCardsContainer>
+          {Array.from({ length: 5 }, (_, i) => (
+            <SigCardSkeleton key={i} />
+          ))}
+        </SigCardsContainer>
+      }
+    >
+      <Await resolve={promise}>
+        {(sigs) => (
+          <SigCardsContainer>
+            <SigButton variant={activeId ? "secondary" : "default"} asChild>
+              <Link to="/">首頁</Link>
+            </SigButton>
+            {sigs.map((sig) => (
+              <SigCard
+                key={sig._id}
+                sig={sig}
+                isActive={sig.customId === activeId?.slice(1)}
+              />
+            ))}
+          </SigCardsContainer>
+        )}
+      </Await>
+    </Suspense>
   );
 }

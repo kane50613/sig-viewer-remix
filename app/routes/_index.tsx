@@ -2,13 +2,10 @@ import { fetchPosts, fetchSigs, fetchTopPosts } from "~/lib/api";
 import type { Route } from "./+types/_index";
 import { Suspense } from "react";
 import { Await } from "react-router";
-import {
-  SigCard,
-  SigCardsContainer,
-  SigCardSkeleton,
-} from "~/components/sig-card";
+import { SigCardsAsyncList } from "~/components/sig-card";
 import {
   PostCard,
+  PostCardsAsyncList,
   PostCardsContainer,
   PostCardSkeleton,
 } from "~/components/post-card";
@@ -33,25 +30,7 @@ export async function clientLoader() {
 export default function Index({ loaderData }: Route.ComponentProps) {
   return (
     <div>
-      <Suspense
-        fallback={
-          <SigCardsContainer>
-            {Array.from({ length: 5 }, (_, i) => (
-              <SigCardSkeleton key={i} />
-            ))}
-          </SigCardsContainer>
-        }
-      >
-        <Await resolve={loaderData.sigs}>
-          {(sigs) => (
-            <SigCardsContainer>
-              {sigs.map((sig) => (
-                <SigCard key={sig._id} sig={sig} />
-              ))}
-            </SigCardsContainer>
-          )}
-        </Await>
-      </Suspense>
+      <SigCardsAsyncList promise={loaderData.sigs} />
       <Suspense
         fallback={
           <CompactPostCardsContainer>
@@ -71,25 +50,7 @@ export default function Index({ loaderData }: Route.ComponentProps) {
           )}
         </Await>
       </Suspense>
-      <Suspense
-        fallback={
-          <PostCardsContainer>
-            {Array.from({ length: 5 }, (_, i) => (
-              <PostCardSkeleton key={i} />
-            ))}
-          </PostCardsContainer>
-        }
-      >
-        <Await resolve={loaderData.posts}>
-          {(posts) => (
-            <PostCardsContainer>
-              {posts.map((post) => (
-                <PostCard key={post._id} post={post} />
-              ))}
-            </PostCardsContainer>
-          )}
-        </Await>
-      </Suspense>
+      <PostCardsAsyncList promise={loaderData.posts} />
     </div>
   );
 }

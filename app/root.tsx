@@ -10,12 +10,13 @@ import {
 import type { Route } from "./+types/root";
 import stylesheet from "./app.css?url";
 import { Header } from "./components/header";
+import type { ReactNode } from "react";
 
 export const links: Route.LinksFunction = () => [
   { rel: "stylesheet", href: stylesheet },
 ];
 
-export function Layout({ children }: { children: React.ReactNode }) {
+export function Layout({ children }: { children: ReactNode }) {
   return (
     <html lang="en">
       <head>
