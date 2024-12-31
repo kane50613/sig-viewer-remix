@@ -2,7 +2,7 @@ import { fetchPosts, fetchSigs, fetchTopPosts } from "~/lib/api";
 import type { Route } from "./+types/_index";
 import { Suspense } from "react";
 import { Await } from "react-router";
-import { SigCardsAsyncList } from "~/components/sig-card";
+import { SigButtonsAsyncList } from "~/components/sig-button";
 import {
   PostCard,
   PostCardsAsyncList,
@@ -30,7 +30,7 @@ export async function clientLoader() {
 export default function Index({ loaderData }: Route.ComponentProps) {
   return (
     <div>
-      <SigCardsAsyncList promise={loaderData.sigs} />
+      <SigButtonsAsyncList promise={loaderData.sigs} />
       <Suspense
         fallback={
           <CompactPostCardsContainer>

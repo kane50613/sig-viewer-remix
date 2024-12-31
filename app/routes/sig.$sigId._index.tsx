@@ -1,6 +1,6 @@
 import { fetchSig, fetchSigs, fetchSigWithPosts } from "~/lib/api";
 import type { Route } from "./+types/sig.$sigId._index";
-import { SigCardsAsyncList } from "~/components/sig-card";
+import { SigButtonsAsyncList } from "~/components/sig-button";
 import { PostCardsAsyncList } from "~/components/post-card";
 
 export function clientLoader({ params }: Route.LoaderArgs) {
@@ -14,7 +14,7 @@ export function clientLoader({ params }: Route.LoaderArgs) {
 export default function Sig({ loaderData, params }: Route.ComponentProps) {
   return (
     <div>
-      <SigCardsAsyncList promise={loaderData.sigs} activeId={params.sigId} />
+      <SigButtonsAsyncList promise={loaderData.sigs} activeId={params.sigId} />
       <PostCardsAsyncList promise={loaderData.posts} />
     </div>
   );

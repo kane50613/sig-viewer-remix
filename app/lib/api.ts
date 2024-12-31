@@ -1,4 +1,11 @@
-import type { ApiPost, ApiResponse, Post, Sig } from "./types";
+import type {
+  ApiComment,
+  ApiPost,
+  ApiResponse,
+  Post,
+  Sig,
+  User,
+} from "./types";
 import removeMarkdown from "remove-markdown";
 
 const postCache = new Map<string, Post>();
@@ -131,4 +138,24 @@ export async function fetchSig(handle: string) {
   await triggerSigsFetch();
 
   return sigCache.get(handle);
+}
+
+export async function fetchsigById(id: string) {
+  await triggerSigsFetch();
+
+  const sig = sigCache.values().find((sig) => sig._id === id);
+
+  if (!sig) {
+    throw new Error("Sig Not Found");
+  }
+
+  return sig;
+}
+
+export function fetchComments(postId: string) {
+  return fetchApi<ApiComment[]>(`/comment/list/post/${postId}`);
+}
+
+export function fetchUser(id: string) {
+  return fetchApi<User>(`/user/${id}`);
 }

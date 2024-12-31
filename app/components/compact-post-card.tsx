@@ -7,15 +7,18 @@ import type { ReactNode } from "react";
 
 export function CompactPostCard({ post }: { post: Post }) {
   return (
-    <Link to={`/posts/${post._id}`}>
-      <Card className="flex w-full min-w-72 flex-col p-4">
-        <PostHeader post={post} className="text-sm" />
+    <Card className="relative flex w-full min-w-72 flex-col p-4">
+      <PostHeader post={post} className="text-sm" />
+      <Link
+        to={`/posts/${post._id}`}
+        className="before:absolute before:inset-0"
+      >
         <CardTitle className="mb-2 text-lg">{post.title}</CardTitle>
-        <p className="line-clamp-2 break-all text-sm text-muted-foreground">
-          {post.cleanContent}
-        </p>
-      </Card>
-    </Link>
+      </Link>
+      <p className="line-clamp-2 break-all text-sm text-muted-foreground">
+        {post.cleanContent}
+      </p>
+    </Card>
   );
 }
 

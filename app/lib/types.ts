@@ -3,18 +3,34 @@ export type ApiResponse<T> = {
   status: number;
 };
 
-type User = {
+export type User = {
   _id: string;
   name: string;
+  avatar: string;
+  customId: string;
+  description: string;
+  email: string;
+  displayName: string;
+  identity: string;
 };
 
 export type ApiPost = {
   _id: string;
-  sig: Pick<Sig, "_id" | "name">;
+  sig:
+    | string
+    | {
+        _id: string;
+        name?: string;
+      };
   title: string;
   cover: string;
   content: string;
-  user: Pick<User, "_id" | "name">;
+  user:
+    | string
+    | {
+        _id: string;
+        name?: string;
+      };
   hashtag: string[];
   like: string[];
   likes: number;
@@ -28,7 +44,7 @@ export type ApiPost = {
 
 export type Post = ApiPost & {
   cleanContent: string;
-}
+};
 
 export type Sig = {
   _id: string;
@@ -40,4 +56,19 @@ export type Sig = {
   moderator: string[];
   name: string;
   removed: boolean;
+};
+
+export type ApiComment = {
+  _id: string;
+  content: string;
+  createdAt: string;
+  like: string[];
+  post: string;
+  removed: boolean;
+  reply: string;
+  updatedAt: string;
+  user: {
+    customId: string;
+    avatar: string;
+  };
 };

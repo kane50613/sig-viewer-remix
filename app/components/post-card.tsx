@@ -1,9 +1,9 @@
 import type { Post } from "~/lib/types";
 import { Skeleton } from "./ui/skeleton";
-import { cn } from "~/lib/utils";
+import { cn, idOrNameDisplay } from "~/lib/utils";
 import { getRelativeTimeString } from "~/lib/relative-time";
 import { Suspense } from "react";
-import { Await } from "react-router";
+import { Await, Link } from "react-router";
 
 export function PostHeader({
   post,
@@ -14,7 +14,7 @@ export function PostHeader({
 }) {
   return (
     <div className={cn("flex justify-between", className)}>
-      <span>{post.sig.name}</span>
+      <span>{idOrNameDisplay(post.sig)}</span>
       <span className="text-muted-foreground">
         {getRelativeTimeString(new Date(post.createdAt))}
       </span>
@@ -22,11 +22,7 @@ export function PostHeader({
   );
 }
 
-export function PostHeaderSkeleton({
-  className,
-}: {
-  className?: string;
-}) {
+export function PostHeaderSkeleton({ className }: { className?: string }) {
   return (
     <div className={cn("flex justify-between text-transparent", className)}>
       <Skeleton>
@@ -42,9 +38,14 @@ function PostCardTitle({ children }: { children: React.ReactNode }) {
 
 export function PostCard({ post }: { post: Post }) {
   return (
-    <div className="flex flex-col py-6 gap-1">
+    <div className="relative flex flex-col gap-1 py-6">
       <PostHeader post={post} />
-      <PostCardTitle>{post.title}</PostCardTitle>
+      <Link
+        to={`/posts/${post._id}`}
+        className="before:absolute before:inset-0"
+      >
+        <PostCardTitle>{post.title}</PostCardTitle>
+      </Link>
       <p className="line-clamp-2 text-gray-600">{post.cleanContent}</p>
     </div>
   );
@@ -52,7 +53,7 @@ export function PostCard({ post }: { post: Post }) {
 
 export function PostCardSkeleton() {
   return (
-    <div className="flex flex-col py-6 text-transparent gap-1">
+    <div className="flex flex-col gap-1 py-6 text-transparent">
       <PostHeaderSkeleton />
       <Skeleton className="mb-2">
         <PostCardTitle>loading...</PostCardTitle>
@@ -74,11 +75,7 @@ export function PostCardsContainer({
   );
 }
 
-export function PostCardsAsyncList({
-  promise,
-}: {
-  promise: Promise<Post[]>;
-}) {
+export function PostCardsAsyncList({ promise }: { promise: Promise<Post[]> }) {
   return (
     <Suspense
       fallback={
@@ -99,5 +96,5 @@ export function PostCardsAsyncList({
         )}
       </Await>
     </Suspense>
-  )
+  );
 }
