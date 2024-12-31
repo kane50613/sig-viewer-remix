@@ -3,13 +3,15 @@ import { Button, type ButtonProps } from "./ui/button";
 import { Await, Link } from "react-router";
 import { Skeleton } from "./ui/skeleton";
 import { Suspense } from "react";
+import { Home } from "lucide-react";
+import { cn } from "~/lib/utils";
 
 function SigButton(props: ButtonProps) {
   return (
     <Button
-      className="h-auto px-3 py-1.5 text-sm"
       variant="secondary"
       {...props}
+      className={cn("h-auto px-3 py-1.5 text-sm", props.className)}
     />
   );
 }
@@ -69,8 +71,14 @@ export function SigCardsAsyncList({
       <Await resolve={promise}>
         {(sigs) => (
           <SigCardsContainer>
-            <SigButton variant={activeId ? "secondary" : "default"} asChild>
-              <Link to="/">首頁</Link>
+            <SigButton
+              variant={activeId ? "secondary" : "default"}
+              asChild
+              className="h-8"
+            >
+              <Link to="/">
+                <Home /> 首頁
+              </Link>
             </SigButton>
             {sigs.map((sig) => (
               <SigCard

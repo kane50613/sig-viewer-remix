@@ -1,24 +1,13 @@
-import { fetchSig, fetchSigPosts, fetchSigs } from "~/lib/api";
+import { fetchSig, fetchSigs, fetchSigWithPosts } from "~/lib/api";
 import type { Route } from "./+types/sig.$sigId._index";
 import { SigCardsAsyncList } from "~/components/sig-card";
 import { PostCardsAsyncList } from "~/components/post-card";
 
-export async function clientLoader({ params }: Route.LoaderArgs) {
-  const sig = await fetchSig(params.sigId);
-  
-  if (!sig) {
-    throw new Response("Not Found", {
-      status: 404,
-    });
-  }
-
-  const sigs = fetchSigs();
-  const posts = fetchSigPosts(sig._id);
-
+export function clientLoader({ params }: Route.LoaderArgs) {
   return {
-    sig,
-    sigs,
-    posts,
+    sigs: fetchSigs(),
+    sig: fetchSig(params.sigId),
+    posts: fetchSigWithPosts(params.sigId).then((r) => r.posts),
   };
 }
 

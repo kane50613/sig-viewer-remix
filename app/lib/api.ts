@@ -48,6 +48,21 @@ export async function fetchSigPosts(sigId: string, skip = 0, limit = 10) {
   return cleanedPosts;
 }
 
+export async function fetchSigWithPosts(handle: string) {
+  const sig = await fetchSig(handle);
+
+  if (!sig) {
+    throw new Error("Sig Not Found");
+  }
+
+  const posts = await fetchSigPosts(sig._id);
+
+  return {
+    sig,
+    posts,
+  };
+}
+
 export async function fetchTopPosts(limit = 3) {
   const posts = await fetchApi<ApiPost[]>(`/post/list?limit=${limit}&skip=0`);
 
@@ -80,24 +95,40 @@ export async function fetchPost(id: string) {
   return cleanedPost;
 }
 
-export async function fetchSigs() {
+let sigPromise: PromiseWithResolvers<Sig[]> | undefined;
+
+async function triggerSigsFetch() {
+  if (sigCache.size > 0) {
+    return;
+  }
+
+  if (sigPromise) {
+    return sigPromise.promise;
+  }
+
+  sigPromise = Promise.withResolvers();
+
+  console.log("triggered sig fetch");
+
   const sigs = await fetchApi<Sig[]>("/sig/list");
 
   for (const sig of sigs) {
-    sigCache.set(sig._id, sig);
+    sigCache.set(`@${sig.customId}`, sig);
   }
 
-  return sigs;
+  sigPromise.resolve(sigs);
+
+  sigPromise = undefined;
+}
+
+export async function fetchSigs() {
+  await triggerSigsFetch();
+
+  return Array.from(sigCache.values());
 }
 
 export async function fetchSig(handle: string) {
-  if (sigCache.has(handle)) {
-    return sigCache.get(handle);
-  }
+  await triggerSigsFetch();
 
-  const sig = await fetchApi<Sig>(`/sig/${handle}`);
-
-  sigCache.set(sig._id, sig);
-
-  return sig;
+  return sigCache.get(handle);
 }
