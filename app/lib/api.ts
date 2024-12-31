@@ -132,9 +132,9 @@ export async function fetchSig(handle: string) {
 }
 
 export async function fetchsigById(id: string) {
-  await triggerSigsFetch();
+  const sigs = await fetchSigs();
 
-  const sig = sigCache.values().find((sig) => sig._id === id);
+  const sig = sigs.find((sig) => sig._id === id);
 
   if (!sig) {
     throw new Error("Sig Not Found");
