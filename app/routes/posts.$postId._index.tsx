@@ -6,6 +6,7 @@ import { Await } from "react-router";
 import { SigCard } from "~/components/sig-card";
 import { CommentsCard } from "~/components/comments-card";
 import { AuthorCard } from "~/components/author-card";
+import { imageUrl } from "~/lib/utils";
 
 export async function clientLoader({ params }: Route.LoaderArgs) {
   const post = await fetchPost(params.postId);
@@ -32,10 +33,12 @@ export default function Post({ loaderData }: Route.ComponentProps) {
       <article className="flex flex-col gap-4 p-4">
         <div className="prose">
           <h1>{loaderData.post.title}</h1>
-          <img
-            src={loaderData.post.cover}
-            className="aspect-video w-full rounded-lg object-contain"
-          />
+          {loaderData.post.cover && (
+            <img
+              src={imageUrl(loaderData.post.cover)}
+              className="aspect-video w-full rounded-lg object-contain"
+            />
+          )}
           <Markdown>{loaderData.post.content}</Markdown>
         </div>
       </article>

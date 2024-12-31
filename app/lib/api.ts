@@ -26,10 +26,7 @@ export async function fetchPosts(skip: number, limit: number) {
     `/post/list?skip=${skip}&limit=${limit}&sort=latest`,
   );
 
-  const cleanedPosts = posts.map((post) => ({
-    ...post,
-    cleanContent: removeMarkdown(post.content),
-  }));
+  const cleanedPosts = posts.map(cleanPost);
 
   for (const post of cleanedPosts) {
     postCache.set(post._id, post);
@@ -43,10 +40,7 @@ export async function fetchSigPosts(sigId: string, skip = 0, limit = 10) {
     `/post/list/sig/${sigId}?skip=${skip}&limit=${limit}&sort=latest`,
   );
 
-  const cleanedPosts = posts.map((post) => ({
-    ...post,
-    cleanContent: removeMarkdown(post.content),
-  }));
+  const cleanedPosts = posts.map(cleanPost);
 
   for (const post of cleanedPosts) {
     postCache.set(post._id, post);
@@ -92,10 +86,7 @@ export async function fetchPost(id: string) {
 
   const post = await fetchApi<ApiPost>(`/post/${id}`);
 
-  const cleanedPost = {
-    ...post,
-    cleanContent: removeMarkdown(post.content),
-  };
+  const cleanedPost = cleanPost(post);
 
   postCache.set(post._id, cleanedPost);
 
@@ -158,4 +149,17 @@ export function fetchComments(postId: string) {
 
 export function fetchUser(id: string) {
   return fetchApi<User>(`/user/${id}`);
+}
+
+function cleanPost(post: ApiPost) {
+  post.content = post.content.trim();
+
+  // remove duplicated headings
+  if (post.content.startsWith("# "))
+    post.content = post.content.slice(post.content.indexOf("\n"));
+
+  return {
+    ...post,
+    cleanContent: removeMarkdown(post.content),
+  };
 }
